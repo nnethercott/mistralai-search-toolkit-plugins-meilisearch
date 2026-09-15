@@ -1,7 +1,6 @@
 # mistralai-search-toolkit-plugins-meilisearch
 
-Meilisearch backend for [Mistral Search Toolkit](https://docs.mistral.ai/en/studio/search/search-toolkit),
-closely following [the Qdrant plugin](https://github.com/qdrant-labs/mistral-qdrant-plugin).
+Meilisearch backend for [Mistral Search Toolkit](https://docs.mistral.ai/en/studio/search/search-toolkit).
 Stores one record per chunk and supports native hybrid search, keyword search, filters,
 facets, navigation, and patches. Embeddings may come from the toolkit or from a
 Meilisearch-configured provider. This is an independent integration.
@@ -37,7 +36,7 @@ Start a local server in another terminal:
 If your environment configures a private package index with older toolkit releases,
 use `uv sync --index https://pypi.org/simple` to resolve the published dependencies.
 
-## Supplied embeddings: Qdrant-style usage
+## Supplied embeddings
 
 ```python
 import asyncio
@@ -93,7 +92,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Like Qdrant, `store.aclose()` closes only clients created from a connection config.
+`store.aclose()` closes only clients created from a connection config.
 `create_collection(config, ...)` closes its temporary client even if setup fails.
 You may instead supply a `meilisearch_python_sdk.AsyncClient` and manage its lifecycle:
 
@@ -220,7 +219,7 @@ For `userProvided` embedders, semantic/hybrid queries require an embedding.
 synonyms, typo tolerance, ranking rules, filterable fields, and faceting through the
 schema's native `settings` dictionary.
 
-Facets count **chunks**, consistent with the Qdrant layout, not unique source files.
+Facets count **chunks**, not unique source files.
 Document metadata is copied to each chunk as `metadata.document_<key>`; chunk metadata
 uses `metadata.<key>`. Native filter strings and AND/OR arrays are accepted. Faceted
 fields must be in `filterableAttributes`. Meilisearch's native hit/facet limits and
@@ -230,11 +229,11 @@ result model.
 
 Scores use Meilisearch `_rankingScore` (higher is better). `distance` is always `None`:
 a ranking score is not a raw cosine distance. Non-cosine embedding models and explicit
-`max_candidates` are rejected because Meilisearch has no equivalent Qdrant controls.
+`max_candidates` are rejected because Meilisearch does not expose those controls.
 
 ## Navigation, patches, and custom fields
 
-The Qdrant-style methods are available: `navigate`, `read`, `grep`, `get_chunk`,
+The following methods are available: `navigate`, `read`, `grep`, `get_chunk`,
 `patch_chunk`, and `patch_document`. Offsets are `[start, end)`. Navigation and reads
 return chunks in source order, without relevance scores. Missing sources/documents
 raise the toolkit's corresponding errors; `get_chunk` returns `None` when absent.
@@ -302,7 +301,7 @@ Verified with Meilisearch **1.53.2**, `meilisearch-python-sdk` **7.5.2**, and to
 task cancellation, and timeouts. These are tested versions,
 not required Meilisearch version bounds.
 
-See [the design decision](docs/decisions/001-qdrant-compatible-meilisearch-adapter.md)
+See [the design decision](docs/decisions/001-meilisearch-adapter.md)
 and [the version policy](docs/decisions/003-unconstrained-meilisearch-versions.md),
 plus [the async SDK migration](docs/decisions/004-native-async-meilisearch-sdk.md).
-[NOTICE](NOTICE) records the upstream reference and attribution.
+[NOTICE](NOTICE) contains third-party attribution.
