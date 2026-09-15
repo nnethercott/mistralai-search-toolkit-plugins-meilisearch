@@ -1,0 +1,8 @@
+This project adapts the structure, field mapping, and lifecycle behavior of
+mistralai-search-toolkit-plugins-qdrant 0.1.5, by the Qdrant Team:
+https://github.com/qdrant-labs/mistral-qdrant-plugin
+Reference commit: 06f12c7f0d4f74e6e29fc3d0226e4f08bb9e00ae (Apache-2.0).
+
+The adapter has been modified for Meilisearch: native hybrid and keyword search,
+facets, provider-managed embeddings, and Meilisearch document/task operations.
+This is an independent integration, not an official Mistral or Meilisearch package.
