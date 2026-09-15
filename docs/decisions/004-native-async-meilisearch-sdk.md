@@ -7,9 +7,7 @@ Date: 2026-09-15
 ## Context
 
 The user requested `sanders41/meilisearch-python-sdk` in place of the official
-synchronous client, following Qdrant as closely as possible and simplifying the
-adapter. The Qdrant checkout was pulled again and remains at
-`06f12c7f0d4f74e6e29fc3d0226e4f08bb9e00ae`.
+synchronous client to simplify the adapter and use native async operations.
 
 ## Decision
 
@@ -20,7 +18,7 @@ models and typed search responses instead of manually handling API JSON.
 Native settings dictionaries remain accepted, but fields unsupported by the SDK
 are rejected explicitly to prevent its default silent field-dropping.
 
-Follow Qdrant's ownership rules: stores created from connection configuration own
+Stores created from connection configuration own
 their client; stores receiving an existing client do not. `aclose()` closes only
 owned clients. Collection setup closes its temporary client in `finally`, including
 on errors and caller cancellation. Callers close shared clients themselves.
@@ -49,7 +47,6 @@ navigation, patching, and write-before-delete replacement semantics are unchange
 - Real-server tests: Meilisearch 1.53.2, SDK 7.5.2, toolkit 0.0.13.
 - Regression tests cover owned/shared client cleanup, setup errors/cancellation,
   failed/canceled background tasks, timeout bounds, and failed replacement safety.
-- [Qdrant reference](https://github.com/qdrant-labs/mistral-qdrant-plugin)
 - [Async SDK source](https://github.com/sanders41/meilisearch-python-sdk)
 - Context7: [AsyncClient docs](https://meilisearch-python-sdk.paulsanders.dev/async_client_api/)
   and [AsyncIndex docs](https://meilisearch-python-sdk.paulsanders.dev/async_index_api/)

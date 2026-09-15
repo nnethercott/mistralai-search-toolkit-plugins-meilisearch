@@ -1,4 +1,4 @@
-# ADR-001: Follow Qdrant's chunk layout using Meilisearch primitives
+# ADR-001: Store toolkit chunks using Meilisearch primitives
 
 Status: Accepted
 
@@ -11,10 +11,8 @@ Date: 2026-09-15
 
 ## Context
 
-The requested integration follows `mistralai-search-toolkit-plugins-qdrant` 0.1.5
-(commit `06f12c7f0d4f74e6e29fc3d0226e4f08bb9e00ae`) closely, with minimal complexity,
-native Meilisearch hybrid/keyword search and facets, and both supplied and
-provider-generated embeddings. The reference repository and published source match.
+The integration needs minimal complexity, native Meilisearch hybrid/keyword search
+and facets, and both supplied and provider-generated embeddings.
 
 ## Decision
 
@@ -25,14 +23,12 @@ through `asyncio.to_thread`; serialize calls per store because SDK HTTP headers 
 mutable. No alternate HTTP transport, job queue, or provider abstraction is added.
 
 Use native Meilisearch hybrid search (`q`, `vector`, `hybrid.semanticRatio`) in one
-request. The reference Qdrant implementation fetches vectors and full-text matches
-separately and fuses them with Python RRF. Meilisearch already provides lexical
-ranking, hybrid blending, filters, and facets; reproducing RRF would duplicate that.
+request. Meilisearch already provides lexical ranking, hybrid blending, filters,
+and facets; application-side result fusion would duplicate that functionality.
 
 Supplied vectors set `regenerate: false`. Missing vectors use `regenerate: true`
 when a provider is configured, or an empty vector list for `userProvided` so chunks
-remain keyword-searchable. The latter deliberately differs from Qdrant's skipping
-of unembedded chunks. Native provider settings are passed through without wrappers.
+remain keyword-searchable. Native provider settings are passed through without wrappers.
 
 The base store subclasses `KeywordStoreIndex`; a thin `VectorStoreIndex` subclass
 marks local-embedding mode. The app chooses it when `embedding_model` is supplied.
@@ -57,15 +53,14 @@ term and reading-order semantics regardless of native typo tolerance and ranking
 
 ## Consequences
 
-The adapter requires Meilisearch 1.43+ for sorted document fetches. It keeps Qdrant's
-non-transactional replacement and read/modify/write patch boundaries: applications
+The adapter requires Meilisearch 1.43+ for sorted document fetches. Replacement and
+read/modify/write patches are non-transactional: applications
 should serialize mutations of a source. Grep scans one source; it is not intended
 as a replacement for native ranked keyword search. Changes to provider settings may
 cause native Meilisearch re-embedding. No fork of the toolkit is required.
 
 ## Sources
 
-- [Qdrant reference](https://github.com/qdrant-labs/mistral-qdrant-plugin)
 - Docstral: toolkit 0.0.13 backend, index lifecycle, and retrieval contracts
 - Context7 and [Meilisearch's embedding docs](https://www.meilisearch.com/docs/capabilities/hybrid_search/how_to/search_with_user_provided_embeddings)
 - [Meilisearch Mistral REST provider](https://www.meilisearch.com/docs/capabilities/hybrid_search/providers/mistral)
