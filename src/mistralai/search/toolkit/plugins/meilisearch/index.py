@@ -165,7 +165,6 @@ class MeilisearchStoreIndex(KeywordStoreIndex):
                     }
                 records.append(record)
             await self._wait(await self._index.add_documents(records))
-            # Like Qdrant, first write replacements, then remove stale chunks.
             # A failed write must never delete the previously indexed document.
             keep = json.dumps([r["_id"] for r in records])
             await self._wait(

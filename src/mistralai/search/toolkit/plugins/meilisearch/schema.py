@@ -1,4 +1,4 @@
-"""Schema and custom field mapping, following the Qdrant plugin's conventions."""
+"""Collection schemas and custom field mappings."""
 
 import re
 from dataclasses import dataclass, field

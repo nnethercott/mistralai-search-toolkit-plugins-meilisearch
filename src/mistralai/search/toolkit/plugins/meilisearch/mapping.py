@@ -1,4 +1,4 @@
-"""Map toolkit chunks to Meilisearch records, retaining Qdrant's public field layout."""
+"""Map toolkit chunks to Meilisearch records."""
 
 import uuid
 from collections.abc import Iterable, Mapping
